@@ -65,7 +65,7 @@ function Messages() {
               </div>
 
               <div className="flex flex-wrap gap-2">
-                <SpeakButton text={drafts[m.id]} label="Read to me" />
+                <SpeakButton text={drafts[m.id] ?? ""} label="Read to me" />
                 <BigButton variant="outline" className="min-h-11 text-sm" onClick={() => setEditing(editing === m.id ? null : m.id)}>
                   <Pencil className="size-4" /> {editing === m.id ? "Done editing" : "Change words"}
                 </BigButton>
