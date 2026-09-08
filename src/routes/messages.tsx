@@ -25,7 +25,7 @@ function Messages() {
   const { enqueue } = useApp();
   const [sent, setSent] = useState<string[]>([]);
   const [editing, setEditing] = useState<string | null>(null);
-  const [drafts, setDrafts] = useState(() => Object.fromEntries(MESSAGES.map((m) => [m.id, m.draft])));
+  const [drafts, setDrafts] = useState<Record<string, string>>(() => Object.fromEntries(MESSAGES.map((m) => [m.id, m.draft])));
 
   return (
     <AppShell title="Messages" subtitle="AI writes · you approve · then it sends">
