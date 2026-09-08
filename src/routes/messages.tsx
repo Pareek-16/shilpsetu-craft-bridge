@@ -51,7 +51,7 @@ function Messages() {
                 </p>
                 {editing === m.id ? (
                   <textarea
-                    value={drafts[m.id]}
+                    value={drafts[m.id] ?? ""}
                     onChange={(e) => setDrafts({ ...drafts, [m.id]: e.target.value })}
                     rows={4}
                     className="w-full rounded-2xl border border-border bg-background p-3 text-sm"

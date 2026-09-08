@@ -301,10 +301,10 @@ function HomeDash() {
       <Section title="Opportunity waiting">
         <Card className="space-y-2">
           <p className="text-sm font-semibold">
-            {BULK[0].buyer} · {BULK[0].qty} {BULK[0].item}
+            {BULK[0]!.buyer} · {BULK[0]!.qty} {BULK[0]!.item}
           </p>
           <p className="text-sm text-muted-foreground">
-            Potential value ₹{(BULK[0].qty * BULK[0].recommend).toLocaleString("en-IN")} if you close at the suggested
+            Potential value ₹{(BULK[0]!.qty * BULK[0]!.recommend).toLocaleString("en-IN")} if you close at the suggested
             rate.
           </p>
           <Link to="/bulk">
