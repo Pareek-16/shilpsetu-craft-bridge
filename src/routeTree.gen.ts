@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BulkRouteImport } from './routes/bulk'
 import { Route as CatalogRouteImport } from './routes/catalog'
-import { Route as ClusterRouteImport } from './routes/cluster'
 import { Route as CreateRouteImport } from './routes/create'
 import { Route as LearnRouteImport } from './routes/learn'
 import { Route as MarketRouteImport } from './routes/market'
@@ -33,11 +32,6 @@ const BulkRoute = BulkRouteImport.update({
 const CatalogRoute = CatalogRouteImport.update({
   id: '/catalog',
   path: '/catalog',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ClusterRoute = ClusterRouteImport.update({
-  id: '/cluster',
-  path: '/cluster',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CreateRoute = CreateRouteImport.update({
@@ -75,7 +69,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/bulk': typeof BulkRoute
   '/catalog': typeof CatalogRoute
-  '/cluster': typeof ClusterRoute
   '/create': typeof CreateRoute
   '/learn': typeof LearnRoute
   '/market': typeof MarketRoute
@@ -87,7 +80,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/bulk': typeof BulkRoute
   '/catalog': typeof CatalogRoute
-  '/cluster': typeof ClusterRoute
   '/create': typeof CreateRoute
   '/learn': typeof LearnRoute
   '/market': typeof MarketRoute
@@ -100,7 +92,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/bulk': typeof BulkRoute
   '/catalog': typeof CatalogRoute
-  '/cluster': typeof ClusterRoute
   '/create': typeof CreateRoute
   '/learn': typeof LearnRoute
   '/market': typeof MarketRoute
@@ -114,7 +105,6 @@ export interface FileRouteTypes {
     | '/'
     | '/bulk'
     | '/catalog'
-    | '/cluster'
     | '/create'
     | '/learn'
     | '/market'
@@ -126,7 +116,6 @@ export interface FileRouteTypes {
     | '/'
     | '/bulk'
     | '/catalog'
-    | '/cluster'
     | '/create'
     | '/learn'
     | '/market'
@@ -138,7 +127,6 @@ export interface FileRouteTypes {
     | '/'
     | '/bulk'
     | '/catalog'
-    | '/cluster'
     | '/create'
     | '/learn'
     | '/market'
@@ -151,7 +139,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BulkRoute: typeof BulkRoute
   CatalogRoute: typeof CatalogRoute
-  ClusterRoute: typeof ClusterRoute
   CreateRoute: typeof CreateRoute
   LearnRoute: typeof LearnRoute
   MarketRoute: typeof MarketRoute
@@ -181,13 +168,6 @@ declare module '@tanstack/react-router' {
       path: '/catalog'
       fullPath: '/catalog'
       preLoaderRoute: typeof CatalogRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cluster': {
-      id: '/cluster'
-      path: '/cluster'
-      fullPath: '/cluster'
-      preLoaderRoute: typeof ClusterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/create': {
@@ -239,7 +219,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BulkRoute: BulkRoute,
   CatalogRoute: CatalogRoute,
-  ClusterRoute: ClusterRoute,
   CreateRoute: CreateRoute,
   LearnRoute: LearnRoute,
   MarketRoute: MarketRoute,
