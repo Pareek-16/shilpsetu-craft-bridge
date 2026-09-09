@@ -11,7 +11,7 @@ import {
   Volume2,
   User,
   ShoppingBag,
-  Users,
+  
   Handshake,
   Store,
 } from "lucide-react";
