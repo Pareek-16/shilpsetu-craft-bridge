@@ -338,8 +338,8 @@ function CreateFlow() {
                 🏺
               </div>
               <div>
-                <p className="font-semibold">{fields.name}</p>
-                <p className="text-sm text-muted-foreground">{fields.material}</p>
+                <p className="font-semibold">{fields["name"]}</p>
+                <p className="text-sm text-muted-foreground">{fields["material"]}</p>
                 <p className="mt-1 font-display text-xl font-bold">₹{price}</p>
               </div>
             </div>
@@ -347,12 +347,12 @@ function CreateFlow() {
               Nothing is published until you tap approve. SHILPSETU never posts, prices or replies on your behalf
               without this step.
             </div>
-            <SpeakButton text={`${fields.name}, price ${price} rupees, ${fields.stock} pieces ready.`} label="Read it back to me" />
+            <SpeakButton text={`${fields["name"]}, price ${price} rupees, ${fields["stock"]} pieces ready.`} label="Read it back to me" />
             {!saved ? (
               <BigButton
                 className="w-full"
                 onClick={() => {
-                  enqueue(`${fields.name} — new listing`);
+                  enqueue(`${fields["name"]} — new listing`);
                   setSaved(true);
                 }}
               >
