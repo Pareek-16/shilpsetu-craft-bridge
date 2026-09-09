@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Handshake, ShieldCheck, TrendingUp } from "lucide-react";
 import { AppShell, Section, SpeakButton } from "@/components/AppShell";
-import { BigButton, Card, Pill } from "@/components/ui-bits";
+import { BigButton, Card } from "@/components/ui-bits";
+import { MicButton } from "@/components/MicInput";
 import { BULK } from "@/lib/mock";
 import { useApp } from "@/lib/app-state";
 
