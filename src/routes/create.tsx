@@ -1,8 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Mic, Camera, Wand2, IndianRupee, ScrollText, CheckCircle2, ArrowRight, Square } from "lucide-react";
+import { Mic, Camera, IndianRupee, ScrollText, CheckCircle2, ArrowRight, ArrowLeft, Square, Sparkles } from "lucide-react";
 import { AppShell, SpeakButton } from "@/components/AppShell";
 import { BigButton, Card, Pill } from "@/components/ui-bits";
+import { MicButton, MicField, useDictation } from "@/components/MicInput";
 import { useApp } from "@/lib/app-state";
 import { VOICE_SCRIPT, VOICE_SCRIPT_EN } from "@/lib/mock";
 
@@ -23,6 +24,26 @@ export const Route = createFileRoute("/create")({
 
 const STEPS = ["Speak", "Photo", "Details", "Price", "Story", "Approve"];
 
+const FIELD_LABELS: Record<string, string> = {
+  name: "Name",
+  category: "Category",
+  material: "Material",
+  size: "Size",
+  time: "Time to make",
+  stock: "Stock",
+  care: "Care",
+};
+
+const SPOKEN_FIELDS: Record<string, string> = {
+  name: "Jaipur Blue Pottery Water Jug",
+  category: "Home & Kitchen › Pottery",
+  material: "Quartz clay with cobalt oxide glaze",
+  size: "8 inch height, 1.2 litre",
+  time: "14 days",
+  stock: "6",
+  care: "Hand wash, avoid direct flame",
+};
+
 function CreateFlow() {
   const { enqueue, online } = useApp();
   const navigate = useNavigate();
@@ -33,16 +54,18 @@ function CreateFlow() {
   const [enhanced, setEnhanced] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  const [fields, setFields] = useState({
+  const [fields, setFields] = useState<Record<string, string>>({
     name: "Jaipur Blue Pottery Water Jug",
     category: "Home & Kitchen › Pottery",
     material: "Quartz clay with cobalt oxide glaze",
-    size: '8 inch height, 1.2 litre',
+    size: "8 inch height, 1.2 litre",
     time: "14 days",
     stock: "6",
     care: "Hand wash, avoid direct flame",
   });
   const [price, setPrice] = useState(1450);
+
+  const dictateAll = useDictation(() => setFields({ ...SPOKEN_FIELDS }), "all", 1600);
 
   // simulated speech-to-text
   useEffect(() => {
@@ -59,6 +82,13 @@ function CreateFlow() {
     return () => clearInterval(t);
   }, [recording]);
 
+  // auto enhance the photo as soon as the photo step opens
+  useEffect(() => {
+    if (step !== 1 || enhanced) return;
+    const t = setTimeout(() => setEnhanced(true), 1200);
+    return () => clearTimeout(t);
+  }, [step, enhanced]);
+
   const runAI = () => {
     setThinking(true);
     setTimeout(() => {
@@ -67,8 +97,14 @@ function CreateFlow() {
     }, 1400);
   };
 
+  const back = () => (step === 0 ? navigate({ to: "/" }) : setStep(step - 1));
+
   return (
     <AppShell title="Add a product" subtitle="Voice first · almost no typing">
+      <BigButton variant="outline" className="min-h-11 px-4 text-sm" onClick={back}>
+        <ArrowLeft className="size-4" /> {step === 0 ? "Back to home" : `Back to ${STEPS[step - 1]}`}
+      </BigButton>
+
       <div className="flex items-center gap-1.5" aria-label={`Step ${step + 1} of ${STEPS.length}`}>
         {STEPS.map((s, i) => (
           <div key={s} className="flex-1">
@@ -131,39 +167,42 @@ function CreateFlow() {
 
       {step === 1 && (
         <Card className="space-y-4">
-          <h2 className="font-display text-xl font-semibold">Add a photo</h2>
+          <div className="flex items-center justify-between gap-2">
+            <h2 className="font-display text-xl font-semibold">Your photo</h2>
+            <Pill tone={enhanced ? "success" : "muted"}>
+              {enhanced ? "Auto-enhanced ✓" : "Enhancing your photo…"}
+            </Pill>
+          </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <p className="text-xs font-semibold text-muted-foreground">Your photo</p>
-              <div className="grid aspect-square place-items-center rounded-2xl bg-muted text-5xl">🏺</div>
+              <p className="text-xs font-semibold text-muted-foreground">Before — your photo</p>
+              <div className="grid aspect-square place-items-center rounded-2xl bg-muted text-5xl grayscale">🏺</div>
               <Pill tone="muted">Dim light, cluttered floor</Pill>
             </div>
             <div className="space-y-2">
-              <p className="text-xs font-semibold text-muted-foreground">AI enhanced</p>
+              <p className="text-xs font-semibold text-muted-foreground">After — AI photo</p>
               <div
                 className={`grid aspect-square place-items-center rounded-2xl text-5xl transition ${
-                  enhanced ? "bg-gradient-to-br from-marigold/40 to-primary/25 shadow-inner" : "bg-muted opacity-40"
+                  enhanced
+                    ? "bg-gradient-to-br from-marigold/40 to-primary/25 shadow-inner"
+                    : "animate-pulse bg-muted opacity-50"
                 }`}
               >
                 🏺
               </div>
               <Pill tone={enhanced ? "success" : "muted"}>
-                {enhanced ? "Clean background, true colours" : "Not enhanced yet"}
+                {enhanced ? "Clean background, true colours" : "Working…"}
               </Pill>
             </div>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <BigButton variant="outline" className="flex-1">
-              <Camera className="size-5" /> Take photo
-            </BigButton>
-            <BigButton className="flex-1" onClick={() => setEnhanced(true)}>
-              <Wand2 className="size-5" /> Enhance
-            </BigButton>
+          <div className="flex items-center gap-2 rounded-2xl bg-accent p-3 text-xs text-accent-foreground">
+            <Sparkles className="size-4 shrink-0" />
+            Every photo is enhanced automatically. Light, background and straightening only — the craft itself is never
+            altered, so buyers see the real product.
           </div>
-          <p className="text-xs text-muted-foreground">
-            Enhancement only fixes light, background and straightening. The craft itself is never altered — buyers see
-            the real product.
-          </p>
+          <BigButton variant="outline" className="w-full">
+            <Camera className="size-5" /> Retake photo
+          </BigButton>
           <BigButton className="w-full" disabled={!enhanced} onClick={runAI}>
             {thinking ? "Understanding your words…" : "Let AI fill the details"}
           </BigButton>
@@ -176,17 +215,36 @@ function CreateFlow() {
             <h2 className="font-display text-xl font-semibold">AI understood this</h2>
             <Pill tone="success">From your voice</Pill>
           </div>
+
+          <div className="flex items-center gap-2 rounded-2xl border border-border p-3">
+            <button
+              type="button"
+              onClick={dictateAll.start}
+              aria-label="Dictate all details"
+              className={`grid size-12 shrink-0 place-items-center rounded-2xl ${
+                dictateAll.listening ? "animate-pulse bg-destructive text-primary-foreground" : "bg-primary text-primary-foreground"
+              }`}
+            >
+              {dictateAll.listening ? <Square className="size-4" /> : <Mic className="size-5" />}
+            </button>
+            <div className="text-sm">
+              <p className="font-semibold">{dictateAll.listening ? "Listening…" : "Dictate all details"}</p>
+              <p className="text-xs text-muted-foreground">Speak the full description once and every line fills in.</p>
+            </div>
+          </div>
+
           {Object.entries(fields).map(([k, v]) => (
-            <label key={k} className="block text-sm">
-              <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{k}</span>
-              <input
-                value={v}
-                onChange={(e) => setFields({ ...fields, [k]: e.target.value })}
-                className="mt-1 min-h-12 w-full rounded-2xl border border-border bg-background px-4 text-base"
-              />
-            </label>
+            <MicField
+              key={k}
+              label={FIELD_LABELS[k] ?? k}
+              value={v}
+              onChange={(nv) => setFields({ ...fields, [k]: nv })}
+              sample={SPOKEN_FIELDS[k] ?? v}
+            />
           ))}
-          <p className="text-xs text-muted-foreground">Tap any line to correct it. Your correction teaches the app.</p>
+          <p className="text-xs text-muted-foreground">
+            Tap the mic on any line to speak it, or tap the line to correct it. Your correction teaches the app.
+          </p>
           <BigButton className="w-full" onClick={() => setStep(3)}>
             Next: fair price <ArrowRight className="size-5" />
           </BigButton>
@@ -201,25 +259,30 @@ function CreateFlow() {
             <p className="font-display text-3xl font-bold">₹1,250 – ₹1,750</p>
           </div>
           <div>
-            <div className="flex items-center justify-between text-sm">
-              <span>Your price</span>
-              <span className="inline-flex items-center font-display text-2xl font-bold">
-                <IndianRupee className="size-5" />
-                {price}
-              </span>
+            <p className="text-sm">Say your price out loud</p>
+            <div className="mt-2 flex items-center gap-2">
+              <div className="flex min-h-13 w-full min-w-0 items-center rounded-2xl border border-border bg-background px-4">
+                <IndianRupee className="size-5 shrink-0 text-muted-foreground" />
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  value={price}
+                  onChange={(e) => setPrice(Number(e.target.value))}
+                  aria-label="Your price in rupees"
+                  className="w-full bg-transparent py-2 font-display text-2xl font-bold outline-none"
+                />
+              </div>
+              <MicButton sample="1450" label="Speak your price" onResult={(v) => setPrice(Number(v))} className="size-13" />
             </div>
-            <input
-              type="range"
-              min={900}
-              max={2200}
-              step={25}
-              value={price}
-              onChange={(e) => setPrice(Number(e.target.value))}
-              className="mt-2 h-3 w-full accent-[oklch(0.52_0.15_38)]"
-              aria-label="Set your price"
-            />
             <p className="mt-1 text-xs text-muted-foreground">
-              {price < 1250 ? "Below fair range — you may be underselling your 14 days of work." : price > 1750 ? "Above range — expect slower sales, but premium buyers do pay this." : "Inside the fair range."}
+              Tap the mic and say, for example, &ldquo;one thousand four hundred fifty rupees&rdquo;.
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {price < 1250
+                ? "Below fair range — you may be underselling your 14 days of work."
+                : price > 1750
+                  ? "Above range — expect slower sales, but premium buyers do pay this."
+                  : "Inside the fair range."}
             </p>
           </div>
           <div className="space-y-2 rounded-2xl border border-border p-3 text-sm">
@@ -253,21 +316,16 @@ function CreateFlow() {
           </p>
           <div className="flex flex-wrap gap-2">
             <Pill tone="primary">GI craft: Blue Pottery of Jaipur</Pill>
-            <Pill tone="primary">Cluster: Kot Jewar</Pill>
+            <Pill tone="primary">Village: Kot Jewar</Pill>
             <Pill tone="primary">Natural, lead-free glaze</Pill>
             <Pill tone="primary">Handmade · 14 days</Pill>
           </div>
           <p className="text-xs text-muted-foreground">
             Stories like this lift the price buyers accept by roughly 20–30% in our pilot data.
           </p>
-          <div className="flex gap-2">
-            <BigButton variant="outline" onClick={() => setStep(3)}>
-              Back
-            </BigButton>
-            <BigButton className="flex-1" onClick={() => setStep(5)}>
-              Review everything
-            </BigButton>
-          </div>
+          <BigButton className="w-full" onClick={() => setStep(5)}>
+            Review everything
+          </BigButton>
         </Card>
       )}
 
@@ -280,8 +338,8 @@ function CreateFlow() {
                 🏺
               </div>
               <div>
-                <p className="font-semibold">{fields.name}</p>
-                <p className="text-sm text-muted-foreground">{fields.material}</p>
+                <p className="font-semibold">{fields["name"]}</p>
+                <p className="text-sm text-muted-foreground">{fields["material"]}</p>
                 <p className="mt-1 font-display text-xl font-bold">₹{price}</p>
               </div>
             </div>
@@ -289,12 +347,12 @@ function CreateFlow() {
               Nothing is published until you tap approve. SHILPSETU never posts, prices or replies on your behalf
               without this step.
             </div>
-            <SpeakButton text={`${fields.name}, price ${price} rupees, ${fields.stock} pieces ready.`} label="Read it back to me" />
+            <SpeakButton text={`${fields["name"]}, price ${price} rupees, ${fields["stock"]} pieces ready.`} label="Read it back to me" />
             {!saved ? (
               <BigButton
                 className="w-full"
                 onClick={() => {
-                  enqueue(`${fields.name} — new listing`);
+                  enqueue(`${fields["name"]} — new listing`);
                   setSaved(true);
                 }}
               >

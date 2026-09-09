@@ -322,10 +322,10 @@ function HomeDash() {
             <span className="text-sm font-semibold">Photo &amp; enhance</span>
           </Card>
         </Link>
-        <Link to="/cluster">
+        <Link to="/bulk">
           <Card className="flex h-full flex-col items-center gap-2 py-6 text-center">
-            <span className="text-2xl">🧑‍🤝‍🧑</span>
-            <span className="text-sm font-semibold">My SHG cluster</span>
+            <span className="text-2xl">🤝</span>
+            <span className="text-sm font-semibold">Bulk deals</span>
           </Card>
         </Link>
       </div>

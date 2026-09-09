@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Handshake, ShieldCheck, TrendingUp } from "lucide-react";
 import { AppShell, Section, SpeakButton } from "@/components/AppShell";
-import { BigButton, Card, Pill } from "@/components/ui-bits";
+import { BigButton, Card } from "@/components/ui-bits";
+import { MicButton } from "@/components/MicInput";
 import { BULK } from "@/lib/mock";
 import { useApp } from "@/lib/app-state";
 
@@ -72,16 +73,28 @@ function Bulk() {
                     <span>Your counter rate</span>
                     <span className="font-display text-2xl font-bold">₹{rate}</span>
                   </div>
-                  <input
-                    type="range"
-                    min={Math.round(b.offer * 0.9)}
-                    max={Math.round(b.recommend * 1.3)}
-                    step={5}
-                    value={rate}
-                    onChange={(e) => setRates({ ...rates, [b.id]: Number(e.target.value) })}
-                    aria-label={`Counter rate for ${b.buyer}`}
-                    className="mt-2 h-3 w-full"
-                  />
+                  <div className="mt-2 flex items-center gap-2">
+                    <div className="flex min-h-13 w-full min-w-0 items-center gap-1 rounded-2xl border border-border bg-background px-4">
+                      <span className="text-lg font-semibold text-muted-foreground">₹</span>
+                      <input
+                        type="number"
+                        inputMode="numeric"
+                        value={rate}
+                        onChange={(e) => setRates({ ...rates, [b.id]: Number(e.target.value) })}
+                        aria-label={`Counter rate for ${b.buyer}`}
+                        className="w-full bg-transparent py-2 font-display text-xl font-bold outline-none"
+                      />
+                    </div>
+                    <MicButton
+                      sample={String(b.recommend)}
+                      label="Speak your rate"
+                      onResult={(v) => setRates({ ...rates, [b.id]: Number(v) })}
+                      className="size-13"
+                    />
+                  </div>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Tap the mic and say your rate, for example &ldquo;{b.recommend} rupees&rdquo;.
+                  </p>
                   <p className={`mt-1 text-xs ${belowFloor ? "text-destructive" : "text-success-ink"}`}>
                     {belowFloor
                       ? "Below your cost floor — you would lose money on this order."

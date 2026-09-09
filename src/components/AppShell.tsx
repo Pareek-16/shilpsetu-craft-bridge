@@ -11,7 +11,7 @@ import {
   Volume2,
   User,
   ShoppingBag,
-  Users,
+  
   Handshake,
   Store,
 } from "lucide-react";
@@ -30,7 +30,7 @@ const NAV = [
 const MORE = [
   { to: "/orders", label: "Orders", icon: ShoppingBag },
   { to: "/bulk", label: "Bulk deals", icon: Handshake },
-  { to: "/cluster", label: "Cluster", icon: Users },
+  
   { to: "/market", label: "Buyer view", icon: Store },
   { to: "/profile", label: "Profile", icon: User },
 ] as const;
